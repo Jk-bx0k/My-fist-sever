@@ -4,27 +4,58 @@ const fs = require('fs');
 const port = process.env.PORT || 3000;
 
 
+// ตรวจสอบไฟล์วิดีโอ
+console.log(
+    "มีไฟล์ background.mp4 ไหม :",
+    fs.existsSync("background.mp4")
+);
+
+
+
 const server = http.createServer((req,res)=>{
 
 
-// ==========================
-// เปิดไฟล์วิดีโอพื้นหลัง
-// ==========================
+// ===============================
+// ส่งไฟล์วิดีโอพื้นหลัง
+// ===============================
 
 if(req.url === "/background.mp4"){
 
 
-const stream = fs.createReadStream("background.mp4");
+const filePath = "./background.mp4";
+
+
+if(fs.existsSync(filePath)){
+
+
+const stream = fs.createReadStream(filePath);
+
 
 
 res.writeHead(200,{
-    "Content-Type":"video/mp4",
-    "Accept-Ranges":"bytes",
-    "Cache-Control":"no-cache"
+
+"Content-Type":"video/mp4",
+
+"Cache-Control":"no-cache"
+
 });
 
 
+
 stream.pipe(res);
+
+
+
+}else{
+
+
+res.writeHead(404);
+
+res.end("ไม่พบไฟล์ background.mp4");
+
+
+}
+
 
 
 return;
@@ -35,9 +66,11 @@ return;
 
 
 
-// ==========================
+
+// ===============================
 // หน้าเว็บไซต์
-// ==========================
+// ===============================
+
 
 res.statusCode = 200;
 
@@ -49,13 +82,13 @@ res.setHeader(
 
 
 
+
 res.end(`
 
 
 <!DOCTYPE html>
 
 <html lang="th">
-
 
 <head>
 
@@ -71,7 +104,6 @@ res.end(`
 
 
 <style>
-
 
 
 *{
@@ -114,9 +146,8 @@ color:white;
 
 
 
-/* =================
-   VIDEO BACKGROUND
-================= */
+
+/* VIDEO BACKGROUND */
 
 
 #bgVideo{
@@ -148,7 +179,8 @@ z-index:-2;
 
 
 
-/* ชั้นดำแดง */
+/* Overlay ดำแดง */
+
 
 body::after{
 
@@ -193,10 +225,6 @@ z-index:-1;
 
 
 
-
-/* กล่องหลัก */
-
-
 .container{
 
 
@@ -206,42 +234,32 @@ width:90%;
 max-width:700px;
 
 
-
 padding:40px;
-
 
 
 text-align:center;
 
 
-
 background:
 
-
 rgba(10,10,10,0.85);
-
 
 
 
 border:2px solid red;
 
 
-
 border-radius:20px;
-
 
 
 box-shadow:
 
 
-0 0 30px red,
-
-0 0 60px rgba(255,0,0,.4);
+0 0 30px red;
 
 
 
 transition:.2s;
-
 
 
 }
@@ -255,9 +273,7 @@ h1{
 font-size:40px;
 
 
-
 color:#ff0033;
-
 
 
 text-shadow:
@@ -266,7 +282,6 @@ text-shadow:
 0 0 10px red,
 
 0 0 30px red;
-
 
 
 margin-bottom:20px;
@@ -279,12 +294,9 @@ margin-bottom:20px;
 
 p{
 
-
 font-size:18px;
 
-
 color:#ddd;
-
 
 }
 
@@ -297,31 +309,19 @@ color:#ddd;
 margin-top:30px;
 
 
-
 padding:25px;
-
 
 
 background:#111;
 
 
-
 border-left:5px solid red;
-
 
 
 border-radius:15px;
 
 
-
-box-shadow:
-
-0 0 15px rgba(255,0,0,.3);
-
-
-
 }
-
 
 
 
@@ -332,21 +332,16 @@ box-shadow:
 display:inline-block;
 
 
-
 margin-top:20px;
-
 
 
 padding:12px 30px;
 
 
-
 background:red;
 
 
-
 border-radius:30px;
-
 
 
 box-shadow:
@@ -362,9 +357,7 @@ font-weight:bold;
 animation:pulse 1.5s infinite;
 
 
-
 }
-
 
 
 
@@ -387,20 +380,13 @@ box-shadow:
 
 
 
-
 .footer{
 
 
 margin-top:30px;
 
 
-
 color:#aaa;
-
-
-
-font-size:14px;
-
 
 
 }
@@ -417,8 +403,8 @@ font-size:14px;
 <body>
 
 
+<!-- Video Background -->
 
-<!-- VIDEO พื้นหลัง -->
 
 <video autoplay muted loop playsinline id="bgVideo">
 
@@ -435,13 +421,11 @@ font-size:14px;
 <div class="container">
 
 
-
 <h1>
 
 🔥 MY FIRST SERVER 🔥
 
 </h1>
-
 
 
 
@@ -475,13 +459,11 @@ Web Server ของ
 
 
 
-
 <p>
 
 รหัสนักศึกษา : 69319010191
 
 </p>
-
 
 
 
@@ -492,7 +474,6 @@ SERVER ONLINE ✓
 </div>
 
 
-
 </div>
 
 
@@ -501,23 +482,17 @@ SERVER ONLINE ✓
 
 <div class="footer">
 
-
 Node.js + Railway Deployment
-
 
 <br>
 
-
 เครื่องแม่ข่ายทำงานปกติ
 
-
-
 </div>
 
 
 
 </div>
-
 
 
 
@@ -527,11 +502,7 @@ Node.js + Railway Deployment
 <script>
 
 
-
-// =====================
 // เอฟเฟกต์แสงตามเมาส์
-// =====================
-
 
 
 var glow=document.createElement("div");
@@ -580,11 +551,7 @@ document.addEventListener("mousemove",function(e){
 glow.style.left=e.clientX+"px";
 
 
-
 glow.style.top=e.clientY+"px";
-
-
-
 
 
 
@@ -595,15 +562,12 @@ var y=(window.innerHeight/2-e.clientY)/40;
 
 
 
-
 document.querySelector(".container").style.transform=
 
 "rotateY("+x+"deg) rotateX("+y+"deg)";
 
 
-
 });
-
 
 
 
@@ -613,35 +577,28 @@ document.querySelector(".container").style.transform=
 document.addEventListener("mouseleave",function(){
 
 
-
 document.querySelector(".container").style.transform=
 
 "rotateY(0deg) rotateX(0deg)";
 
 
-
 });
-
-
 
 
 </script>
 
 
 
-
 </body>
 
-
 </html>
-
 
 
 `);
 
 
-});
 
+});
 
 
 
