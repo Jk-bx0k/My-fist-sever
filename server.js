@@ -3,7 +3,7 @@ const http = require('http');
 const port = process.env.PORT || 3000;
 
 
-const server = http.createServer((req, res) => {
+const server = http.createServer((req,res)=>{
 
 
 res.statusCode = 200;
@@ -27,7 +27,6 @@ res.end(`
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
 <title>My First Server</title>
 
 
@@ -35,68 +34,96 @@ res.end(`
 
 
 *{
+
 margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:'Segoe UI',sans-serif;
+
 }
 
 
 
 body{
 
-
 height:100vh;
-
 
 display:flex;
 
-
 justify-content:center;
-
 
 align-items:center;
 
-
-
-background:
-
-
-linear-gradient(
-rgba(0,0,0,0.75),
-rgba(100,0,0,0.75)
-),
-
-
-
-url("https://images.unsplash.com/photo-1558494949-ef010cbdcc31");
-
-
-
-background-size:cover;
-
-
-background-position:center;
-
-
-
 color:white;
 
-
 overflow:hidden;
-
 
 }
 
 
 
-/* กล่องหลัก */
+/* วิดีโอพื้นหลัง */
+
+#bgVideo{
+
+position:fixed;
+
+right:0;
+
+bottom:0;
+
+min-width:100%;
+
+min-height:100%;
+
+width:auto;
+
+height:auto;
+
+object-fit:cover;
+
+z-index:-2;
+
+}
+
+
+
+/* ชั้นสีดำแดงทับวิดีโอ */
+
+body::before{
+
+content:"";
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+
+background:
+
+linear-gradient(
+rgba(0,0,0,0.75),
+rgba(120,0,0,0.65)
+);
+
+
+z-index:-1;
+
+}
+
+
+
 
 .container{
 
 
 width:90%;
-
 
 max-width:700px;
 
@@ -114,14 +141,10 @@ rgba(10,10,10,0.85);
 
 
 
-border:
-
-2px solid red;
-
+border:2px solid red;
 
 
 border-radius:20px;
-
 
 
 box-shadow:
@@ -154,6 +177,7 @@ text-shadow:
 0 0 30px red;
 
 
+
 margin-bottom:20px;
 
 
@@ -171,6 +195,7 @@ color:#ddd;
 
 
 
+
 .card{
 
 
@@ -183,16 +208,14 @@ padding:25px;
 background:#111;
 
 
-border-left:
-
-5px solid red;
-
+border-left:5px solid red;
 
 
 border-radius:15px;
 
 
 }
+
 
 
 
@@ -208,7 +231,6 @@ margin-top:20px;
 padding:12px 30px;
 
 
-
 background:red;
 
 
@@ -220,15 +242,14 @@ box-shadow:
 0 0 25px red;
 
 
-
 font-weight:bold;
+
 
 
 animation:pulse 1.5s infinite;
 
 
 }
-
 
 
 
@@ -275,9 +296,18 @@ font-size:14px;
 <body>
 
 
+<!-- VIDEO BACKGROUND -->
+
+<video autoplay muted loop id="bgVideo">
+
+<source src="https://pixabay.com/th/videos/download/video-26097_medium.mp4" type="video/mp4">
+
+</video>
+
+
+
 
 <div class="container">
-
 
 
 <h1>
@@ -357,11 +387,10 @@ Node.js + Railway Deployment
 
 
 
-
 <script>
 
 
-// แสงตามเมาส์
+// เอฟเฟกต์แสงตามเมาส์
 
 var glow=document.createElement("div");
 
@@ -391,9 +420,7 @@ document.body.appendChild(glow);
 
 
 
-
 document.addEventListener("mousemove",function(e){
-
 
 
 glow.style.left=e.clientX+"px";
@@ -405,7 +432,6 @@ glow.style.top=e.clientY+"px";
 
 var x=(window.innerWidth/2-e.clientX)/40;
 
-
 var y=(window.innerHeight/2-e.clientY)/40;
 
 
@@ -415,9 +441,8 @@ document.querySelector(".container").style.transform=
 "rotateY("+x+"deg) rotateX("+y+"deg)";
 
 
+
 });
-
-
 
 
 
