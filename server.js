@@ -7,19 +7,25 @@ const port = process.env.PORT || 3000;
 const server = http.createServer((req,res)=>{
 
 
+// ==========================
 // เปิดไฟล์วิดีโอพื้นหลัง
+// ==========================
 
 if(req.url === "/background.mp4"){
 
-const video = fs.readFileSync("background.mp4");
+
+const stream = fs.createReadStream("background.mp4");
 
 
 res.writeHead(200,{
-    "Content-Type":"video/mp4"
+    "Content-Type":"video/mp4",
+    "Accept-Ranges":"bytes",
+    "Cache-Control":"no-cache"
 });
 
 
-res.end(video);
+stream.pipe(res);
+
 
 return;
 
@@ -28,7 +34,13 @@ return;
 
 
 
+
+// ==========================
+// หน้าเว็บไซต์
+// ==========================
+
 res.statusCode = 200;
+
 
 res.setHeader(
 'Content-Type',
@@ -39,68 +51,97 @@ res.setHeader(
 
 res.end(`
 
+
 <!DOCTYPE html>
 
 <html lang="th">
 
+
 <head>
+
 
 <meta charset="UTF-8">
 
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
 <title>My First Server</title>
+
 
 
 <style>
 
 
+
 *{
 
 margin:0;
+
 padding:0;
+
 box-sizing:border-box;
+
 font-family:'Segoe UI',sans-serif;
 
 }
 
 
 
+
 body{
+
 
 height:100vh;
 
+
 display:flex;
+
 
 justify-content:center;
 
+
 align-items:center;
+
 
 overflow:hidden;
 
+
 color:white;
+
 
 }
 
 
 
-/* วิดีโอพื้นหลัง */
+/* =================
+   VIDEO BACKGROUND
+================= */
+
 
 #bgVideo{
 
+
 position:fixed;
+
 
 top:0;
 
+
 left:0;
+
 
 width:100%;
 
+
 height:100%;
+
 
 object-fit:cover;
 
+
 z-index:-2;
+
 
 }
 
@@ -111,28 +152,41 @@ z-index:-2;
 
 body::after{
 
+
 content:"";
+
 
 position:fixed;
 
+
 top:0;
+
 
 left:0;
 
+
 width:100%;
+
 
 height:100%;
 
 
+
 background:
 
+
 linear-gradient(
+
 rgba(0,0,0,0.75),
+
 rgba(120,0,0,0.65)
+
 );
 
 
+
 z-index:-1;
+
 
 }
 
@@ -140,15 +194,21 @@ z-index:-1;
 
 
 
+/* กล่องหลัก */
+
+
 .container{
 
 
 width:90%;
 
+
 max-width:700px;
 
 
+
 padding:40px;
+
 
 
 text-align:center;
@@ -157,25 +217,35 @@ text-align:center;
 
 background:
 
+
 rgba(10,10,10,0.85);
+
 
 
 
 border:2px solid red;
 
 
+
 border-radius:20px;
+
 
 
 box-shadow:
 
-0 0 30px red;
+
+0 0 30px red,
+
+0 0 60px rgba(255,0,0,.4);
 
 
-transition:0.2s;
+
+transition:.2s;
+
 
 
 }
+
 
 
 
@@ -185,13 +255,18 @@ h1{
 font-size:40px;
 
 
+
 color:#ff0033;
+
 
 
 text-shadow:
 
+
 0 0 10px red,
+
 0 0 30px red;
+
 
 
 margin-bottom:20px;
@@ -201,11 +276,15 @@ margin-bottom:20px;
 
 
 
+
 p{
+
 
 font-size:18px;
 
+
 color:#ddd;
+
 
 }
 
@@ -218,19 +297,32 @@ color:#ddd;
 margin-top:30px;
 
 
+
 padding:25px;
+
 
 
 background:#111;
 
 
+
 border-left:5px solid red;
+
 
 
 border-radius:15px;
 
 
+
+box-shadow:
+
+0 0 15px rgba(255,0,0,.3);
+
+
+
 }
+
+
 
 
 
@@ -240,16 +332,21 @@ border-radius:15px;
 display:inline-block;
 
 
+
 margin-top:20px;
+
 
 
 padding:12px 30px;
 
 
+
 background:red;
 
 
+
 border-radius:30px;
+
 
 
 box-shadow:
@@ -257,10 +354,13 @@ box-shadow:
 0 0 25px red;
 
 
+
 font-weight:bold;
 
 
+
 animation:pulse 1.5s infinite;
+
 
 
 }
@@ -273,12 +373,18 @@ animation:pulse 1.5s infinite;
 
 50%{
 
-box-shadow:0 0 50px red;
+
+box-shadow:
+
+0 0 50px red;
+
 
 }
 
 
 }
+
+
 
 
 
@@ -288,11 +394,16 @@ box-shadow:0 0 50px red;
 margin-top:30px;
 
 
+
 color:#aaa;
 
 
-}
 
+font-size:14px;
+
+
+
+}
 
 
 
@@ -307,13 +418,16 @@ color:#aaa;
 
 
 
-<!-- วิดีโอพื้นหลัง -->
+<!-- VIDEO พื้นหลัง -->
 
-<video autoplay muted loop id="bgVideo">
+<video autoplay muted loop playsinline id="bgVideo">
+
 
 <source src="/background.mp4" type="video/mp4">
 
+
 </video>
+
 
 
 
@@ -321,11 +435,14 @@ color:#aaa;
 <div class="container">
 
 
+
 <h1>
 
 🔥 MY FIRST SERVER 🔥
 
 </h1>
+
+
 
 
 <p>
@@ -346,6 +463,7 @@ Web Server ของ
 
 
 
+
 <div class="card">
 
 
@@ -356,11 +474,14 @@ Web Server ของ
 </h2>
 
 
+
+
 <p>
 
 รหัสนักศึกษา : 69319010191
 
 </p>
+
 
 
 
@@ -371,7 +492,10 @@ SERVER ONLINE ✓
 </div>
 
 
+
 </div>
+
+
 
 
 
@@ -380,15 +504,22 @@ SERVER ONLINE ✓
 
 Node.js + Railway Deployment
 
+
 <br>
+
 
 เครื่องแม่ข่ายทำงานปกติ
 
 
+
 </div>
 
 
+
 </div>
+
+
+
 
 
 
@@ -396,20 +527,31 @@ Node.js + Railway Deployment
 <script>
 
 
-// แสงตามเมาส์
+
+// =====================
+// เอฟเฟกต์แสงตามเมาส์
+// =====================
+
+
 
 var glow=document.createElement("div");
 
 
+
 glow.style.position="fixed";
+
 
 glow.style.width="250px";
 
+
 glow.style.height="250px";
+
 
 glow.style.borderRadius="50%";
 
+
 glow.style.pointerEvents="none";
+
 
 
 glow.style.background=
@@ -417,25 +559,40 @@ glow.style.background=
 "radial-gradient(circle,rgba(255,0,0,.4),transparent 70%)";
 
 
-glow.style.transform="translate(-50%,-50%)";
+
+glow.style.transform=
+
+"translate(-50%,-50%)";
+
 
 
 document.body.appendChild(glow);
 
 
 
+
+
+
 document.addEventListener("mousemove",function(e){
 
 
+
 glow.style.left=e.clientX+"px";
+
+
 
 glow.style.top=e.clientY+"px";
 
 
 
+
+
+
 var x=(window.innerWidth/2-e.clientX)/40;
 
+
 var y=(window.innerHeight/2-e.clientY)/40;
+
 
 
 
@@ -444,11 +601,17 @@ document.querySelector(".container").style.transform=
 "rotateY("+x+"deg) rotateX("+y+"deg)";
 
 
+
 });
 
 
 
+
+
+
+
 document.addEventListener("mouseleave",function(){
+
 
 
 document.querySelector(".container").style.transform=
@@ -456,20 +619,30 @@ document.querySelector(".container").style.transform=
 "rotateY(0deg) rotateX(0deg)";
 
 
+
 });
+
+
 
 
 </script>
 
 
 
+
 </body>
+
 
 </html>
 
+
+
 `);
 
+
 });
+
+
 
 
 
@@ -477,7 +650,9 @@ server.listen(port,()=>{
 
 
 console.log(
+
 "Server running on port "+port
+
 );
 
 
